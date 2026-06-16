@@ -1,0 +1,18 @@
+services:
+  dev:
+    container_name: loanTracker-dev
+    build:
+      context: .
+      target: dev 
+    volumes:
+      - .:/app
+      - /tmp/loanTracker/srv
+    ports:
+      - "3000:3000"
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    volumes:
+      - /var/run/docker.sock:/run/docker.sock:ro 
+    ports:
+      - "42069:8080" 
