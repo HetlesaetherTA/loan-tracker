@@ -10,7 +10,7 @@ CMD ["air", "-c", ".air.toml"]
 FROM base AS prod
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /manager ./cmd/loanTracker/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /manager ./cmd/loan-tracker/main.go
 
 CMD ["/manager"]
 
