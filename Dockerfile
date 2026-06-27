@@ -1,6 +1,9 @@
 FROM golang:1.26-alpine AS base   
 WORKDIR /app
-COPY go.mod go.sum ./
+
+COPY auth.hetlesaether.com /auth.hetlesaether.com
+
+COPY loan-tracker/go.mod loan-tracker/go.sum ./
 RUN go mod download
 
 FROM base AS dev

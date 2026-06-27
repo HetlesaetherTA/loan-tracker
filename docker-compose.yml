@@ -2,17 +2,12 @@ services:
   dev:
     container_name: loanTracker-dev
     build:
-      context: .
+      context: ..
+      dockerfile: ./loan-tracker/Dockerfile
       target: dev 
+    network_mode: host
     volumes:
       - .:/app
+      - ../auth.hetlesaether.com:/auth.hetlesaether.com
       - /tmp/loanTracker/srv
-    ports:
-      - "3000:3000"
-  dozzle:
-    image: amir20/dozzle:latest
-    container_name: dozzle
-    volumes:
-      - /var/run/docker.sock:/run/docker.sock:ro 
-    ports:
-      - "42069:8080" 
+

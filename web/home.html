@@ -1,0 +1,35 @@
+<html>
+  <body>
+    <button onclick="test()">btn</button>
+  </body>
+
+<script>
+
+  const originalFetch = window.fetch;
+
+  window.fetch = async (...args) => {
+      const response = await originalFetch(...args);
+
+      if (response.status === 401) {
+          const data = await response.json();
+          window.location.replace(data.redirect_to);
+          return new Promise(() => {});
+      }
+
+      return response;
+  };
+
+  const test = () => {
+    fetch("/api/test", {
+      method: "GET",
+      header: {"Content-Type": "application/json"},
+    })
+      .then(res => {
+        // if (res.status == 401) {
+        //   window.location.href = "http://localhost:8000/login"
+        // }
+        console.log(res.text())
+      })
+  }
+</script>
+</html>
