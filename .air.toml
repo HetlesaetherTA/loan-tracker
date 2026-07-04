@@ -4,9 +4,9 @@ tmp_dir = "tmp"
 
 [build]
   # 🟢 Pointing to your exact main directory
-  cmd = "go build -o ./tmp/loan-tracker ./cmd/loan-tracker/main.go && go build -o ./tmp/web-server ./cmd/web-server/main.go"
+  cmd = "go build -o ./tmp/loan-tracker ./cmd/loan-tracker/main.go && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o ./tmp/admin-cli ./cmd/admin-cli/main.go"
 
-  bin = "./run-dev.sh"
+  bin = "./tmp/loan-tracker"
   pre_cmd  = ["export $(cat .env | xargs)"]
   # Watch these extensions
   include_ext = ["go", "tpl", "tmpl", "html", "toml"]

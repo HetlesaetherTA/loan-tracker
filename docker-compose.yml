@@ -1,13 +1,23 @@
 services:
   dev:
-    container_name: loanTracker-dev
+    container_name: dev_loans
     build:
       context: ..
       dockerfile: ./loan-tracker/Dockerfile
       target: dev 
     network_mode: host
+    environment:
+      - DATABASE_URL=postgres://app_user_loan_tracker:thisisatemporarypassword@127.0.0.1:5432/main
     volumes:
       - .:/app
       - ../auth.hetlesaether.com:/auth.hetlesaether.com
       - /tmp/loanTracker/srv
-
+  admin-cli:
+    container_name: admin-cli_loans
+    image: alpine:latest
+    network_mode: host
+    environment:
+      - DATABASE_URL=postgres://admin:thisisatest@127.0.0.1:5432/main
+      - APP_ENV=dev
+    volumes:
+      - ./:/app
