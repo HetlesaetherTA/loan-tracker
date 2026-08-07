@@ -45,6 +45,7 @@ func NewRouteHandler(tmpl *template.Template) *RouteHandler {
 	}
 }
 
+// Handles requests to /
 func (h *RouteHandler) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
@@ -72,16 +73,15 @@ func (h *RouteHandler) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	h.tmpl.ExecuteTemplate(w, "home.html", loans)
 }
 
+// Handles requests to /{{loanID}}
 func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 
 	userUUID := getUserID(w, r)
 
-	// Extract loanID from body
 	loanID := chi.URLParam(r, "loanID")
 
-	// Convert loanID to UUID
 	loanUUID, err := stringToUUID(loanID)
 
 	if err != nil {
@@ -89,8 +89,7 @@ func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get selected loan from DB only if user owns the loan
-	res, err := h.queries.GetUserLoanByID(ctx, database.GetUserLoanByIDParams{
+	resLoan, err := h.queries.GetUserLoanByID(ctx, database.GetUserLoanByIDParams{
 		ID: pgtype.UUID{
 			Bytes: loanUUID,
 			Valid: true,
@@ -111,10 +110,48 @@ func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loan := parseLoan(res)
+	resLedger, err := h.queries.GetUserLoanLedger(ctx, database.GetUserLoanLedgerParams{
+		LoanID: pgtype.UUID{
+			Bytes: loanUUID,
+			Valid: true,
+		},
+		UserID: pgtype.UUID{
+			Bytes: userUUID,
+			Valid: true,
+		},
+	})
 
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+		slog.Error("Failed to get ledger from DB", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// building pageData struct
+	type loanPageData struct {
+		Loan         Loan
+		Transactions []Transaction
+	}
+
+	loan := parseLoan(resLoan)
+	var transactions []Transaction
+
+	for _, transaction := range resLedger {
+		transactions = append(transactions, parseTransaction(transaction))
+	}
+
+	pageData := loanPageData{
+		Loan:         loan,
+		Transactions: transactions,
+	}
+
+	// Success
 	w.WriteHeader(http.StatusOK)
-	h.tmpl.ExecuteTemplate(w, "loan.html", loan)
+	h.tmpl.ExecuteTemplate(w, "loan.html", pageData)
 }
 
 func getUserID(w http.ResponseWriter, r *http.Request) [16]byte {

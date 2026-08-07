@@ -12,7 +12,7 @@ import (
 )
 
 const getUserLoanByID = `-- name: GetUserLoanByID :one
-SELECT id, user_id, original_principal, principal, yearly_interest, interest_calculated_at, due_at, payment_frequency, next_payment_at, updated_at, current_version, status, description
+SELECT id, user_id, currency, original_principal, principal, yearly_interest, interest_calculated_at, due_at, payment_frequency, next_payment_at, updated_at, current_version, status, description
 FROM app_loan_tracker.user_loan_view
 WHERE id = $1
   AND user_id = $2
@@ -29,6 +29,7 @@ func (q *Queries) GetUserLoanByID(ctx context.Context, arg GetUserLoanByIDParams
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
+		&i.Currency,
 		&i.OriginalPrincipal,
 		&i.Principal,
 		&i.YearlyInterest,
@@ -47,7 +48,7 @@ func (q *Queries) GetUserLoanByID(ctx context.Context, arg GetUserLoanByIDParams
 const getUserLoanLedger = `-- name: GetUserLoanLedger :many
 SELECT ledger.transction_id, ledger.loan_id, ledger.sender_user_id, ledger.amount, ledger.loan_version, ledger.created_at, ledger.description
 FROM app_loan_tracker.user_ledger_view AS ledger
-  JOIN app_loan_tracker.user_loan_view ON id = ledger.id
+  JOIN app_loan_tracker.user_loan_view ON id = ledger.loan_id
 WHERE loan_id = $1
   AND user_id = $2
 `
@@ -86,7 +87,7 @@ func (q *Queries) GetUserLoanLedger(ctx context.Context, arg GetUserLoanLedgerPa
 }
 
 const getUserLoans = `-- name: GetUserLoans :many
-SELECT id, user_id, original_principal, principal, yearly_interest, interest_calculated_at, due_at, payment_frequency, next_payment_at, updated_at, current_version, status, description
+SELECT id, user_id, currency, original_principal, principal, yearly_interest, interest_calculated_at, due_at, payment_frequency, next_payment_at, updated_at, current_version, status, description
 FROM app_loan_tracker.user_loan_view
 WHERE user_id = $1
 `
@@ -103,6 +104,7 @@ func (q *Queries) GetUserLoans(ctx context.Context, userID pgtype.UUID) ([]AppLo
 		if err := rows.Scan(
 			&i.ID,
 			&i.UserID,
+			&i.Currency,
 			&i.OriginalPrincipal,
 			&i.Principal,
 			&i.YearlyInterest,

@@ -6,7 +6,7 @@ WHERE user_id = $1;
 -- name: GetUserLoanLedger :many
 SELECT ledger.*
 FROM app_loan_tracker.user_ledger_view AS ledger
-  JOIN app_loan_tracker.user_loan_view ON id = ledger.id
+  JOIN app_loan_tracker.user_loan_view ON id = ledger.loan_id
 WHERE loan_id = $1
   AND user_id = $2;
 

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -32,6 +33,10 @@ func main() {
 	rPublic := chi.NewRouter()
 	rPublic.Use(middleware.Logger)
 
+	fs := http.FileServer(http.Dir("./web"))
+	rPublic.Handle("/css/*", fs)
+	rPublic.Handle("/js/*", fs)
+
 	rPublic.Group(func(r chi.Router) {
 		// User is sent to login (defined in pb) if client cookie "session_token" is not valid
 		r.Use(auth.Middleware(APPLICATION_NAME, ROLES))
@@ -55,6 +60,7 @@ func main() {
 		})
 	})
 
+	slog.Info(fmt.Sprintf("Webserver on %s", HOST))
 	http.ListenAndServe(HOST, rPublic)
 }
 
@@ -100,7 +106,7 @@ func setupAuth(ctx context.Context) *pb.Client {
 			return client
 		}
 
-		slog.Error("Cloud not connect to auth sever (gRPC), trying again in 10 seconds...")
+		slog.Error("Could not connect to auth sever (gRPC), trying again in 10 seconds...")
 
 		select {
 		case <-time.After(10 * time.Second):

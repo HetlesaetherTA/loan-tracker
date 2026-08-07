@@ -16,6 +16,7 @@ CREATE TYPE app_loan_tracker.frequency_type_enum AS ENUM(
 CREATE TABLE app_loan_tracker.loans(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
+  currency text NOT NULL,
   original_principal numeric(16, 4) NOT NULL,
   principal numeric(16, 4) NOT NULL,
   yearly_interest numeric(6, 5) NOT NULL,
@@ -45,6 +46,8 @@ CREATE TABLE app_loan_tracker.ledger(
 -- Views:
 CREATE VIEW app_loan_tracker.user_loan_view AS
 SELECT id,
+  user_id,
+  currency,
   original_principal,
   principal,
   yearly_interest,

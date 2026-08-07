@@ -114,6 +114,7 @@ type AppLoanTrackerLedger struct {
 type AppLoanTrackerLoan struct {
 	ID                   pgtype.UUID
 	UserID               pgtype.UUID
+	Currency             string
 	OriginalPrincipal    pgtype.Numeric
 	Principal            pgtype.Numeric
 	YearlyInterest       pgtype.Numeric
@@ -141,6 +142,7 @@ type AppLoanTrackerUserLedgerView struct {
 type AppLoanTrackerUserLoanView struct {
 	ID                   pgtype.UUID
 	UserID               pgtype.UUID
+	Currency             string
 	OriginalPrincipal    pgtype.Numeric
 	Principal            pgtype.Numeric
 	YearlyInterest       pgtype.Numeric

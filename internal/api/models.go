@@ -10,6 +10,7 @@ import (
 type Loan struct {
 	ID                   string `json:"id,omitempty"`
 	UserID               string `json:"user_id,omitempty"`
+	Currency             string `json:"currency,omitempty"`
 	OriginalPrincipal    string `json:"original_principal,omitempty"`
 	Principal            string `json:"principal,omitempty"`
 	YearlyInterest       string `json:"yearly_interest,omitempty"`
@@ -37,6 +38,7 @@ func parseLoan(loan database.AppLoanTrackerUserLoanView) Loan {
 	return Loan{
 		ID:                   loan.ID.String(),
 		UserID:               loan.UserID.String(),
+		Currency:             loan.Currency,
 		OriginalPrincipal:    pgNumericToDecimal(loan.OriginalPrincipal).String(),
 		Principal:            pgNumericToDecimal(loan.Principal).String(),
 		YearlyInterest:       pgNumericToDecimal(loan.YearlyInterest).Mul(decimal.NewFromInt(100)).String(),
