@@ -9,6 +9,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
+  align-items: stretch;
 }
 
 .card {
@@ -17,6 +18,10 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #e1e4e8;
+
+  display: flex;
+  flex-direction: column;
+  height: 80%;
 }
 
 .card h3 {
@@ -24,6 +29,8 @@ body {
   color: #2c3e50;
   border-bottom: 2px solid #eee;
   padding-bottom: 0.5rem;
+
+  flex-shrink: 0;
 }
 
 .row {
