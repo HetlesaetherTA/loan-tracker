@@ -8,7 +8,8 @@ SELECT ledger.*
 FROM app_loan_tracker.user_ledger_view AS ledger
   JOIN app_loan_tracker.user_loan_view ON id = ledger.loan_id
 WHERE loan_id = $1
-  AND user_id = $2;
+  AND user_id = $2
+ORDER BY created_at DESC;
 
 -- name: GetUserLoanByID :one
 SELECT *

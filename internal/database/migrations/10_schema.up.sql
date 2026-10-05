@@ -79,8 +79,8 @@ CREATE INDEX idx_ledger_loan_id ON app_loan_tracker.ledger(loan_id);
 -- access:
 GRANT USAGE ON SCHEMA app_loan_tracker TO app_user_loan_tracker;
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA app_loan_tracker TO app_user_loan_tracker;
+GRANT SELECT ON ALL TABLES IN SCHEMA app_loan_tracker TO app_user_loan_tracker;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA app_loan_tracker GRANT
-SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_user_loan_tracker;
+SELECT ON TABLES TO app_user_loan_tracker;
 

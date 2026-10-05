@@ -26,14 +26,12 @@ func NewRouteHandler(tmpl *template.Template) *RouteHandler {
 	defer cancel()
 
 	pool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
-
 	if err != nil {
 		slog.Error("Could not connect to database", "error", err)
 		return nil
 	}
 
 	err = pool.Ping(ctx)
-
 	if err != nil {
 		slog.Error("Ping to database failed", "error", err)
 		return nil
@@ -56,7 +54,6 @@ func (h *RouteHandler) HandleRoot(w http.ResponseWriter, r *http.Request) {
 		Bytes: userUUID,
 		Valid: true,
 	})
-
 	if err != nil {
 		slog.Error("Failed to get loans from DB", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -83,7 +80,6 @@ func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 	loanID := chi.URLParam(r, "loanID")
 
 	loanUUID, err := stringToUUID(loanID)
-
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
@@ -99,7 +95,6 @@ func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 			Valid: true,
 		},
 	})
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -120,7 +115,6 @@ func (h *RouteHandler) HandleLoanPage(w http.ResponseWriter, r *http.Request) {
 			Valid: true,
 		},
 	})
-
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -166,7 +160,6 @@ func getUserID(w http.ResponseWriter, r *http.Request) [16]byte {
 	}
 
 	userUUID, err := stringToUUID(userID)
-
 	if err != nil {
 		slog.Error("Failed to parse UUID from context string", "userID", userID, "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
