@@ -8,7 +8,6 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/shopspring/decimal v1.4.0
-	hetlesaether.com/auth v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -47,5 +46,3 @@ require (
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
-
-replace hetlesaether.com/auth => ../auth.hetlesaether.com

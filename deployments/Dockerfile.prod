@@ -1,0 +1,27 @@
+# --- Stage 1: Build Stage ---
+FROM golang:1.26-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -tags netgo \
+    -ldflags="-s -w -extldflags '-static'" \
+    -o /app/tmp/loan-tracker ./cmd/loan-tracker/main.go
+
+# --- Stage 2: Run Stage ---
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=builder /app/tmp/loan-tracker /app/tmp/loan-tracker
+
+COPY --from=builder /app/web /app/web
+
+EXPOSE 8000
+
+CMD ["/app/tmp/loan-tracker"]

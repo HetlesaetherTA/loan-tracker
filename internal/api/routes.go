@@ -37,6 +37,7 @@ func NewRouteHandler(tmpl *template.Template) *RouteHandler {
 		return nil
 	}
 
+	slog.Info("Sucessfully connected to database")
 	return &RouteHandler{
 		tmpl,
 		database.New(pool),

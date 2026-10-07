@@ -1,0 +1,31 @@
+services:
+  loan-tracker:
+    container_name: loans.hetlesaether.com
+    build:
+      context: ..
+      dockerfile: deployments/Dockerfile.prod
+    networks:
+      - proxy-nw
+      - db_nw
+    labels:
+      caddy: loans.hetlesaether.com
+      caddy.reverse_proxy: "{{upstreams 8000}}"
+      caddy.tls.dns: "cloudflare {env.CLOUDFLARE_API_TOKEN}"
+    env_file: .env
+
+  admin-cli:
+    container_name: loans.hetlesaether.admin-cli
+    image: alpine:latest
+    working_dir: /app/tmp
+    env_file: .env.admin
+    volumes:
+      - ../:/app
+    networks:
+      - db_nw
+
+networks:
+  proxy-nw:
+    external: true
+  db_nw:
+    driver: bridge
+    name: db-nw

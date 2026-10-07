@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "hetlesaether.com/loan-tracker/pkg/auth/proto";
+
+service AuthService {
+  rpc ValidateSession (SessionRequest) returns (SessionResponse);
+}
+
+message SessionRequest {
+  string session_token = 1;
+  string appliaction = 2;
+  repeated string authorized_roles = 3;
+}
+
+message SessionResponse {
+  string user_id = 1;
+}

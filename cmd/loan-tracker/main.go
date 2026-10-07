@@ -12,11 +12,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	pb "hetlesaether.com/auth/pkg/auth"
 	"hetlesaether.com/loan-tracker/internal/api"
+	pb "hetlesaether.com/loan-tracker/pkg/auth"
 )
 
-var HOST string = "0.0.0.0:8002"
+var HOST string = "0.0.0.0:8000"
 var APPLICATION_NAME string = "loan-tracker"
 var ROLES = []string{"admin", "user"}
 
@@ -99,7 +99,7 @@ func setupRouteHandler(ctx context.Context) *api.RouteHandler {
 
 func setupAuth(ctx context.Context) *pb.Client {
 	for {
-		client, err := pb.NewClient("localhost:50051")
+		client, err := pb.NewClient("auth-service:50051")
 
 		if err == nil {
 			slog.Info("Connected to auth server")
